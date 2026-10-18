@@ -2,28 +2,21 @@
 """
 gen_qr.py - Generate NUX Mighty Amp-compatible preset QR codes from JSON.
 
-This script supports both:
-  1. Human-readable preset JSON files (with descriptive names for amps, cabs, pedals,
-     and settings, such as settings.json or individual preset files).
-  2. Legacy raw byte JSON files (containing raw nux_data, nux_data_b64, or device + payload).
+This script supports multiple JSON formats:
+  1. Single Human-Readable Preset JSON files (with descriptive names, blocks, 
+     and uppercase signal chain codes, such as back_in_black.json).
+  2. Multi-Preset Collection JSON files (containing a "presets" array).
+  3. Legacy Raw Byte JSON files (containing raw nux_data, nux_data_b64, or device + payload).
 
 Usage:
   # Generate QR code from a single readable preset JSON file:
-  python gen_qr.py tones/nitro.json
-  python gen_qr.py tones/nitro.json nitro.png
+  python gen_qr.py tones/back_in_black.json back_in_black.png
 
   # Generate QR code from a multi-preset JSON file by name or index:
   python gen_qr.py tones/settings.json -o nitro.png --preset "Nitro - Dick Dale"
-  python gen_qr.py tones/settings.json -o funk49.png --preset 0
-
-  # List all presets available in a JSON file:
-  python gen_qr.py tones/settings.json --list
-
-  # Generate QR codes for all presets in a multi-preset JSON file:
-  python gen_qr.py tones/settings.json --all
 
   # Dump the compiled low-level byte representation without generating an image:
-  python gen_qr.py tones/nitro.json --dump-json
+  python gen_qr.py tones/back_in_black.json --dump-json
 
 Dependencies:
   pip install qrcode[pil] pillow
@@ -197,7 +190,6 @@ def parse_num(v: Any, default: float = 0.0) -> float:
                 return num
             except ValueError:
                 pass
-        # Context-dependent descriptive words:
         if s in ("short", "fast", "min", "minimum", "low"):
             return 30.0
         if s in ("medium", "mid", "default", "normal"):
@@ -212,17 +204,14 @@ def clamp_byte(v: Any) -> int:
     return max(0, min(255, int(round(float(v)))))
 
 def low_cut_to_byte(val: Any) -> int:
-    """Map Low Cut parameter (Hz or 0..100) to preset byte value."""
     if val is None:
         return 0
     num = parse_num(val, 20.0)
     if num <= 100.0:
         return clamp_byte(num)
-    # Range is 20 Hz to 300 Hz
     return max(0, min(100, int((num - 20.0) / 280.0 * 100.0)))
 
 def high_cut_to_byte(val: Any) -> int:
-    """Map High Cut parameter (Hz or 0..100) to preset byte value."""
     if val is None:
         return 100
     num = parse_num(val, 20000.0)
@@ -237,7 +226,6 @@ def high_cut_to_byte(val: Any) -> int:
         return 100
 
 def eq_band_to_byte(val: Any) -> int:
-    """Handle EQ band values in dB (-15..+15) or 0..100."""
     num = parse_num(val, 0.0)
     if -15.0 <= num <= 15.0:
         return clamp_byte(50.0 + num)
@@ -248,8 +236,6 @@ def eq_band_to_byte(val: Any) -> int:
 # ---------------------------------------------------------------------------
 
 def compile_readable_preset(preset: Dict[str, Any], default_dev_id: int = DEFAULT_DEVICE_ID) -> bytes:
-    """Compile a human-readable preset dictionary into a valid NUX byte array."""
-    # Resolve device ID and version
     dev_field = preset.get("device")
     dev_id = default_dev_id
     dev_ver = DEFAULT_DEVICE_VERSION
@@ -290,14 +276,14 @@ def compile_readable_preset(preset: Dict[str, Any], default_dev_id: int = DEFAUL
     c_model = clean_key(cmp_b.get("model", "rosecomp"))
     c_idx = COMPRESSORS.get(c_model, 1)
     data[1] = c_idx | (0 if cmp_on else 0x40)
-    if c_idx == 1:  # Rose Comp
+    if c_idx == 1:
         data[15] = clamp_byte(parse_num(cmp_b.get("sustain"), 50.0))
         data[16] = clamp_byte(parse_num(cmp_b.get("level"), 50.0))
-    elif c_idx == 2:  # K Comp
+    elif c_idx == 2:
         data[15] = clamp_byte(parse_num(cmp_b.get("sustain"), 50.0))
         data[16] = clamp_byte(parse_num(cmp_b.get("level"), 50.0))
         data[17] = clamp_byte(parse_num(cmp_b.get("clipping", cmp_b.get("clip")), 50.0))
-    elif c_idx == 3:  # Studio Comp
+    elif c_idx == 3:
         data[15] = clamp_byte(parse_num(cmp_b.get("threshold"), 50.0))
         data[16] = clamp_byte(parse_num(cmp_b.get("ratio"), 50.0))
         data[17] = clamp_byte(parse_num(cmp_b.get("gain"), 50.0))
@@ -309,41 +295,41 @@ def compile_readable_preset(preset: Dict[str, Any], default_dev_id: int = DEFAUL
     e_model = clean_key(efx.get("model", "rcboost"))
     e_idx = EFX_MODELS.get(e_model, 2)
     data[2] = e_idx | (0 if efx_on else 0x40)
-    if e_idx in (2, 3):  # RC Boost / AC Boost
+    if e_idx in (2, 3):
         data[20] = clamp_byte(parse_num(efx.get("gain", efx.get("drive")), 35.0))
         data[21] = clamp_byte(parse_num(efx.get("volume", efx.get("level")), 40.0))
         data[22] = clamp_byte(parse_num(efx.get("bass"), 35.0))
         data[23] = clamp_byte(parse_num(efx.get("treble"), 70.0))
-    elif e_idx in (4, 5, 6, 7, 9):  # Dist One, TS Drive, Blues Drive, Morning Drive, Red Dirt
+    elif e_idx in (4, 5, 6, 7, 9):
         data[20] = clamp_byte(parse_num(efx.get("drive", efx.get("gain")), 50.0))
         data[21] = clamp_byte(parse_num(efx.get("tone", efx.get("filter")), 50.0))
         data[22] = clamp_byte(parse_num(efx.get("level", efx.get("volume")), 50.0))
-    elif e_idx == 8:  # Eat Dist (Rat)
+    elif e_idx == 8:
         data[20] = clamp_byte(parse_num(efx.get("distortion", efx.get("drive")), 65.0))
         data[21] = clamp_byte(parse_num(efx.get("filter", efx.get("tone")), 70.0))
         data[22] = clamp_byte(parse_num(efx.get("volume", efx.get("level")), 60.0))
-    elif e_idx == 10:  # Crunch
+    elif e_idx == 10:
         data[20] = clamp_byte(parse_num(efx.get("gain", efx.get("drive")), 50.0))
         data[21] = clamp_byte(parse_num(efx.get("tone"), 50.0))
         data[22] = clamp_byte(parse_num(efx.get("volume", efx.get("level")), 50.0))
-    elif e_idx == 11:  # Muff Fuzz
+    elif e_idx == 11:
         data[20] = clamp_byte(parse_num(efx.get("sustain", efx.get("drive")), 50.0))
         data[21] = clamp_byte(parse_num(efx.get("tone"), 50.0))
         data[22] = clamp_byte(parse_num(efx.get("volume", efx.get("level")), 50.0))
-    elif e_idx == 12:  # Katana
+    elif e_idx == 12:
         data[20] = clamp_byte(parse_num(efx.get("boost", efx.get("gain")), 0.0))
         data[21] = clamp_byte(parse_num(efx.get("volume", efx.get("level")), 45.0))
-    elif e_idx == 13:  # ST Singer
+    elif e_idx == 13:
         data[20] = clamp_byte(parse_num(efx.get("gain", efx.get("drive")), 50.0))
         data[21] = clamp_byte(parse_num(efx.get("volume", efx.get("level")), 50.0))
         data[22] = clamp_byte(parse_num(efx.get("filter", efx.get("tone")), 50.0))
-    elif e_idx == 14:  # Touch Wah
+    elif e_idx == 14:
         data[20] = clamp_byte(parse_num(efx.get("type"), 1.0))
         data[21] = clamp_byte(parse_num(efx.get("sense"), 90.0))
         data[22] = clamp_byte(parse_num(efx.get("wow"), 35.0))
         data[23] = clamp_byte(parse_num(efx.get("direction", efx.get("updown")), 0.0))
         data[24] = clamp_byte(parse_num(efx.get("level"), 100.0))
-    else:  # Distortion+
+    else:
         data[20] = clamp_byte(parse_num(efx.get("distortion", efx.get("drive")), 50.0))
         data[21] = clamp_byte(parse_num(efx.get("output", efx.get("level", efx.get("volume"))), 50.0))
 
@@ -367,7 +353,7 @@ def compile_readable_preset(preset: Dict[str, Any], default_dev_id: int = DEFAUL
     eq_model = clean_key(eq.get("model", "6band"))
     eq_idx = 3 if "10" in eq_model else 1
     data[4] = eq_idx | (0 if eq_on else 0x40)
-    if eq_idx == 1:  # 6-Band
+    if eq_idx == 1:
         data[36] = eq_band_to_byte(eq.get("band_100hz", eq.get("100", 0.0)))
         data[37] = eq_band_to_byte(eq.get("band_220hz", eq.get("220", 0.0)))
         data[38] = eq_band_to_byte(eq.get("band_500hz", eq.get("500", 0.0)))
@@ -376,7 +362,7 @@ def compile_readable_preset(preset: Dict[str, Any], default_dev_id: int = DEFAUL
         data[41] = eq_band_to_byte(eq.get("band_6400hz", eq.get("6400", eq.get("6.4k", 0.0))))
         for b in range(42, 48):
             data[b] = 50
-    else:  # 10-Band
+    else:
         data[36] = eq_band_to_byte(eq.get("vol", 0.0))
         freqs = ["31", "62", "125", "250", "500", "1k", "2k", "4k", "8k", "16k"]
         for i, fr in enumerate(freqs):
@@ -398,23 +384,23 @@ def compile_readable_preset(preset: Dict[str, Any], default_dev_id: int = DEFAUL
     r_model = clean_key(rvb.get("model", "room"))
     r_idx = REVERBS.get(r_model, 1)
     data[8] = r_idx | (0 if rvb_on else 0x40)
-    if r_idx in (3, 4):  # Plate / Spring
+    if r_idx in (3, 4):
         data[70] = clamp_byte(parse_num(rvb.get("decay"), 50.0))
         data[71] = clamp_byte(parse_num(rvb.get("level", rvb.get("mix")), 50.0))
-    elif r_idx == 1:  # Room
+    elif r_idx == 1:
         data[70] = clamp_byte(parse_num(rvb.get("decay"), 50.0))
         data[71] = clamp_byte(parse_num(rvb.get("tone"), 50.0))
         data[72] = clamp_byte(parse_num(rvb.get("level", rvb.get("mix")), 50.0))
-    elif r_idx == 2:  # Hall
+    elif r_idx == 2:
         data[70] = clamp_byte(parse_num(rvb.get("decay"), 50.0))
         data[71] = clamp_byte(parse_num(rvb.get("predelay", rvb.get("pre_delay")), 50.0))
         data[72] = clamp_byte(parse_num(rvb.get("liveliness"), 50.0))
         data[73] = clamp_byte(parse_num(rvb.get("level", rvb.get("mix")), 50.0))
-    elif r_idx == 5:  # Shimmer
+    elif r_idx == 5:
         data[70] = clamp_byte(parse_num(rvb.get("mix", rvb.get("level")), 50.0))
         data[71] = clamp_byte(parse_num(rvb.get("decay"), 50.0))
         data[72] = clamp_byte(parse_num(rvb.get("shimmer"), 50.0))
-    elif r_idx == 6:  # Damp
+    elif r_idx == 6:
         data[70] = clamp_byte(parse_num(rvb.get("mix", rvb.get("level")), 50.0))
         data[71] = clamp_byte(parse_num(rvb.get("depth"), 50.0))
 
@@ -478,18 +464,12 @@ def validate_byte_list(lst: List[int]) -> None:
             raise ValueError(f"nux data element at index {i} is out of byte range (0..255): {v}")
 
 def build_nux_bytes_from_json(obj: Any, preset_selector: Optional[Union[str, int]] = None, override_device: Optional[str] = None) -> Tuple[bytes, str]:
-    """
-    Parse any JSON format (human-readable preset, multi-preset, or legacy byte array)
-    and return (compiled_bytes, preset_name).
-    """
-    # 1. Check if multi-preset collection
     if isinstance(obj, dict) and "presets" in obj and isinstance(obj["presets"], list):
         presets = obj["presets"]
         if not presets:
             raise ValueError("presets array in JSON is empty")
         selected_preset = None
         if preset_selector is not None:
-            # Check integer index
             if isinstance(preset_selector, int) or (isinstance(preset_selector, str) and preset_selector.isdigit()):
                 idx = int(preset_selector)
                 if 0 <= idx < len(presets):
@@ -514,11 +494,9 @@ def build_nux_bytes_from_json(obj: Any, preset_selector: Optional[Union[str, int
             dev_id = DEVICE_MAP.get(clean_key(override_device), (DEFAULT_DEVICE_ID, 1))[0]
         return compile_readable_preset(selected_preset, default_dev_id=dev_id), name
 
-    # 2. Check if wrapped single preset
     if isinstance(obj, dict) and "preset" in obj and isinstance(obj["preset"], dict):
         obj = obj["preset"]
 
-    # 3. Check if human-readable preset (contains "blocks" or "signal_chain" or "amplifier")
     if isinstance(obj, dict) and ("blocks" in obj or "signal_chain" in obj or "amplifier" in obj):
         name = obj.get("name", "Preset")
         dev_id = DEFAULT_DEVICE_ID
@@ -526,20 +504,17 @@ def build_nux_bytes_from_json(obj: Any, preset_selector: Optional[Union[str, int
             dev_id = DEVICE_MAP.get(clean_key(override_device), (DEFAULT_DEVICE_ID, 1))[0]
         return compile_readable_preset(obj, default_dev_id=dev_id), name
 
-    # 4. Legacy format: raw nux_data
     if isinstance(obj, dict) and "nux_data" in obj:
         lst = obj["nux_data"]
         validate_byte_list(lst)
         return bytes(lst), "Raw nux_data"
 
-    # 5. Legacy format: nux_data_b64
     if isinstance(obj, dict) and "nux_data_b64" in obj:
         if not isinstance(obj["nux_data_b64"], str):
             raise ValueError("nux_data_b64 must be a base64 string")
         data = base64.b64decode(obj["nux_data_b64"], validate=True)
         return data, "Raw base64"
 
-    # 6. Legacy format: device + payload
     if isinstance(obj, dict) and "device" in obj and "payload" in obj:
         dev = obj["device"]
         if not isinstance(dev, dict) or "id" not in dev or "version" not in dev:
@@ -560,7 +535,6 @@ def build_nux_bytes_from_json(obj: Any, preset_selector: Optional[Union[str, int
 # ---------------------------------------------------------------------------
 
 def generate_qr_image(data_bytes: bytes, box_size: int = 10, border: int = 4) -> Image.Image:
-    """Generate a high error-correction PIL Image (QR code) for Mighty Amp."""
     b64 = base64.b64encode(data_bytes).decode("ascii")
     content = NUX_PREFIX + b64
 
@@ -601,14 +575,12 @@ def main(argv=None):
         parser.print_help()
         sys.exit(2)
 
-    # Load JSON
     if input_path == "-":
         obj = json.load(sys.stdin)
     else:
         with open(input_path, "r", encoding="utf-8") as f:
             obj = json.load(f)
 
-    # Handle --list
     if args.list:
         if isinstance(obj, dict) and "presets" in obj and isinstance(obj["presets"], list):
             print(f"Presets found in {input_path} ({len(obj['presets'])} total):")
@@ -623,7 +595,6 @@ def main(argv=None):
             print(f"No named presets found in {input_path} (raw byte format).")
         sys.exit(0)
 
-    # Handle --all
     if args.all:
         if not (isinstance(obj, dict) and "presets" in obj and isinstance(obj["presets"], list)):
             print("Error: --all requires an input file with a 'presets' array.", file=sys.stderr)
@@ -640,7 +611,6 @@ def main(argv=None):
             print(f"[{i+1}/{len(presets)}] Saved '{name}' -> {target} ({len(nux_bytes)} bytes, device id {nux_bytes[0]})")
         sys.exit(0)
 
-    # Single QR generation
     try:
         nux_bytes, name = build_nux_bytes_from_json(obj, preset_selector=args.preset, override_device=args.device)
     except Exception as e:

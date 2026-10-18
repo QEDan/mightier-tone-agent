@@ -1,0 +1,73 @@
+{
+  "name": "Foxy Lady - Jimi Hendrix",
+  "artist": "Jimi Hendrix",
+  "album": "Are You Experienced (1967)",
+  "guitar": "Fender Stratocaster (single-coils, neck pickup, vintage vibrato)",
+  "device": "mighty_plug_pro",
+  "signal_chain": [
+    "NG",
+    "CMP",
+    "MOD",
+    "EFX",
+    "AMP",
+    "CAB",
+    "EQ",
+    "DLY",
+    "RVB"
+  ],
+  "blocks": {
+    "efx": {
+      "model": "Muff Fuzz",
+      "enabled": true,
+      "drive": 65,
+      "tone": 55,
+      "level": 50,
+      "notes": "Emulates the vintage fuzz pedal aggression and sustaining upper harmonics used for the main riff."
+    },
+    "amplifier": {
+      "model": "Plexi 100",
+      "enabled": true,
+      "gain": 70,
+      "master": 75,
+      "bass": 50,
+      "middle": 65,
+      "treble": 68,
+      "presence": 60,
+      "notes": "Pushed Marshall 1959 Plexi sound giving classic output valve grit and touch sensitivity."
+    },
+    "cabinet": {
+      "model": "GB412",
+      "enabled": true,
+      "level": 50,
+      "low_cut_hz": 40,
+      "high_cut_hz": 12000,
+      "notes": "Greenback 4x12 cab response matching vintage British tone stacks."
+    },
+    "reverb": {
+      "model": "Spring",
+      "enabled": true,
+      "decay": 35,
+      "mix": 25,
+      "tone": 50,
+      "notes": "Subtle studio spring ambiance."
+    }
+  },
+  "other_blocks": {
+    "noise_gate": true,
+    "compressor": false,
+    "eq": false,
+    "modulation": false,
+    "delay": false,
+    "wah": false,
+    "send_return": false
+  },
+  "guitar_settings": {
+    "pickup_selector": "neck",
+    "volume": 9,
+    "tone": 10,
+    "notes": "Stratocaster neck pickup for that warm, glassy, singing blues-rock attack."
+  },
+  "playing_notes": "Heavy use of vibrato arm phrasing, aggressive pick attack on the open E-string riffing, and volume-knob cleanup for rhythm dynamics.",
+  "master": 50,
+  "bpm": 120
+}

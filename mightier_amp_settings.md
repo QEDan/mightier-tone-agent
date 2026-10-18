@@ -729,3 +729,72 @@ Suggested interpretation rules when consuming this document:
 | Actual wah models | Supply the wah definitions (`WahDummyPro` is a stub) |
 | Resolution of `//check this` amp slot-6 mappings | Verify against device or newer source |
 | Whether the 2 ChopTones IRs are factory or user slots | Check device IR list or app release notes |
+
+---
+
+## 17. Human-Readable Preset JSON Schema Specification
+
+To support direct parsing into `gen_qr.py`[cite: 1] and usage within the NUX Mighty Plug Pro ecosystem, single-preset human-readable files must follow the schema demonstrated below (see also `back_in_black.json`[cite: 4]):
+
+```json
+{
+  "name": "Preset Name",
+  "artist": "Artist / Inspiration",
+  "device": "mighty_plug_pro",
+  "signal_chain": [
+    "NG",
+    "CMP",
+    "MOD",
+    "EFX",
+    "AMP",
+    "CAB",
+    "EQ",
+    "DLY",
+    "RVB"
+  ],
+  "blocks": {
+    "efx": {
+      "model": "Muff Fuzz",
+      "enabled": true,
+      "drive": 65,
+      "tone": 55,
+      "level": 50
+    },
+    "amplifier": {
+      "model": "Plexi 100",
+      "enabled": true,
+      "gain": 70,
+      "master": 75,
+      "bass": 50,
+      "middle": 65,
+      "treble": 68,
+      "presence": 60
+    }
+  },
+  "other_blocks": {
+    "noise_gate": true,
+    "compressor": false,
+    "eq": false,
+    "modulation": false,
+    "delay": false,
+    "reverb": false,
+    "wah": false,
+    "send_return": false
+  },
+  "master": 50,
+  "bpm": 120
+}
+```
+### 17.1 Supported Signal Chain Routing Codes
+
+The signal_chain array accepts standard uppercase short codes mapped internally by FX_ROUTING_MAP:
+
+* NG / GATE: Noise Gate
+* CMP / COMP: Compressor
+* EFX / DRIVE: Effects / Drives / Boosts
+* AMP: Amplifier
+* CAB / IR: Cabinet / Impulse Response
+* EQ: Equalizer
+* MOD: Modulation
+* DLY: Delay
+* RVB: Reverb
