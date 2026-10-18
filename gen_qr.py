@@ -9,20 +9,21 @@ This script supports both:
 
 Usage:
   # Generate QR code from a single readable preset JSON file:
-  python gen_qr.py nitro.json nitro.png
+  python gen_qr.py tones/nitro.json
+  python gen_qr.py tones/nitro.json nitro.png
 
   # Generate QR code from a multi-preset JSON file by name or index:
-  python gen_qr.py settings.json -o nitro.png --preset "Nitro - Dick Dale"
-  python gen_qr.py settings.json -o funk49.png --preset 0
+  python gen_qr.py tones/settings.json -o nitro.png --preset "Nitro - Dick Dale"
+  python gen_qr.py tones/settings.json -o funk49.png --preset 0
 
   # List all presets available in a JSON file:
-  python gen_qr.py settings.json --list
+  python gen_qr.py tones/settings.json --list
 
   # Generate QR codes for all presets in a multi-preset JSON file:
-  python gen_qr.py settings.json --all
+  python gen_qr.py tones/settings.json --all
 
   # Dump the compiled low-level byte representation without generating an image:
-  python gen_qr.py nitro.json --dump-json
+  python gen_qr.py tones/nitro.json --dump-json
 
 Dependencies:
   pip install qrcode[pil] pillow

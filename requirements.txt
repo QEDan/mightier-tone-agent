@@ -1,0 +1,7 @@
+# Core dependencies for generating QR codes
+qrcode[pil]>=7.4.2
+pillow>=9.5.0
+
+# Optional: QR code decoding and verification (used by decode.py)
+# Note: pyzbar requires the zbar C-library (e.g., 'sudo apt install libzbar0' on Debian/Ubuntu or 'brew install zbar' on macOS)
+pyzbar>=0.1.9

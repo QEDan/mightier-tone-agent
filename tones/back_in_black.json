@@ -1,0 +1,65 @@
+{
+  "name": "Back in Black - AC/DC",
+  "artist": "Angus Young / AC/DC",
+  "album": "Back in Black (1980)",
+  "guitar": "Gibson SG (humbuckers, bridge pickup)",
+  "device": "mighty_plug_pro",
+  "signal_chain": [
+    "NG",
+    "CMP",
+    "MOD",
+    "EFX",
+    "AMP",
+    "CAB",
+    "EQ",
+    "DLY",
+    "RVB"
+  ],
+  "blocks": {
+    "efx": {
+      "model": "RC Boost",
+      "enabled": true,
+      "gain": 28,
+      "volume": 55,
+      "bass": 46,
+      "treble": 58,
+      "notes": "Light clean boost push into the front end of the Plexi"
+    },
+    "amplifier": {
+      "model": "Plexi 100",
+      "enabled": true,
+      "gain": 54,
+      "master": 68,
+      "bass": 44,
+      "middle": 61,
+      "treble": 57,
+      "presence": 53
+    },
+    "cabinet": {
+      "model": "M1960AX",
+      "enabled": true,
+      "level": 52,
+      "low_cut_hz": 54,
+      "high_cut_hz": 58
+    }
+  },
+  "other_blocks": {
+    "noise_gate": false,
+    "compressor": false,
+    "eq": false,
+    "modulation": false,
+    "delay": false,
+    "reverb": false,
+    "wah": false,
+    "send_return": false
+  },
+  "guitar_settings": {
+    "pickup_selector": "bridge",
+    "volume": 10,
+    "tone": 10,
+    "notes": "Gibson SG or humbucker bridge pickup, volume rolled to 9-10"
+  },
+  "playing_notes": "Firm right-hand chord attack with snappy palm muting. Classic late-70s Marshall crunch without excessive preamp saturation.",
+  "master": 50,
+  "bpm": 120
+}
