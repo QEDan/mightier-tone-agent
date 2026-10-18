@@ -1,23 +1,70 @@
 {
-  "device": { "id": 11, "version": 1 },
-  "payload": [
-    0,0,0,0,0,0,0,0,0,0,0,
-    1,50,50,
-    1,30,55,0,0,
-    5,45,55,55,0,0,0,
-    2,88,85,35,55,68,0,0,0,
-    1,50,50,51,50,52,51,50,50,50,50,50,50,
-    1,30,30,0,0,
-    0,0,0,0,0,0,
-    0,0,0,0,0,0,0,0,
-    0,0,0,0,
-    2,0,0,0,0,70,100,
-    0,0,0,
-    50,0,0,120,0,
-    0,0,0,0,0,0,0,0,0,0,0,
-    70,85,78,75,52,57,0,0,0,0,0,0,0,0,0,0,
-    0,0,0,0,0,
-    1,
-    0,0,0
-  ]
+  "name": "Funk #49 - James Gang",
+  "artist": "Joe Walsh",
+  "guitar": "Gibson Les Paul Custom (humbuckers)",
+  "device": "mighty_plug_pro",
+  "signal_chain": [
+    "NG",
+    "CMP",
+    "EFX",
+    "AMP",
+    "EQ",
+    "CAB"
+  ],
+  "blocks": {
+    "noise_gate": {
+      "enabled": true,
+      "threshold": 30,
+      "decay": 30
+    },
+    "compressor": {
+      "model": "Rose Comp",
+      "enabled": true,
+      "level": 55,
+      "sustain": 30
+    },
+    "efx": {
+      "model": "T Screamer",
+      "enabled": true,
+      "level": 55,
+      "drive": 45,
+      "tone": 55
+    },
+    "amplifier": {
+      "model": "Deluxe Rvb",
+      "enabled": true,
+      "gain": 88,
+      "master": 85,
+      "bass": 35,
+      "middle": 55,
+      "treble": 68,
+      "bright": 1
+    },
+    "eq": {
+      "model": "6-Band",
+      "enabled": true,
+      "band_100hz": 0,
+      "band_220hz": 0,
+      "band_500hz": 1,
+      "band_1200hz": 0,
+      "band_2600hz": 2,
+      "band_6400hz": 1
+    },
+    "cabinet": {
+      "model": "DR112",
+      "enabled": true,
+      "level": 0,
+      "low_cut_hz": 70,
+      "high_cut_hz": 100
+    }
+  },
+  "other_blocks": {
+    "wah": false,
+    "modulation": false,
+    "delay": false,
+    "reverb": false,
+    "send_return": false
+  },
+  "master": 50,
+  "bpm": 120
 }
