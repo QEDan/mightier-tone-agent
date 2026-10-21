@@ -1,0 +1,103 @@
+{
+  "name": "Unchained - Van Halen",
+  "artist": "Van Halen (Eddie Van Halen)",
+  "album": "Fair Warning (1981)",
+  "guitar": "Humbucker bridge pickup; tune down a whole step for the song's Drop D-flat tuning",
+  "device": "mighty_plug_pro",
+  "signal_chain": [
+    "NG",
+    "CMP",
+    "MOD",
+    "EFX",
+    "AMP",
+    "CAB",
+    "EQ",
+    "DLY",
+    "RVB"
+  ],
+  "blocks": {
+    "noise_gate": {
+      "enabled": true,
+      "threshold": 26,
+      "decay": 35
+    },
+    "compressor": {
+      "enabled": false
+    },
+    "modulation": {
+      "model": "Flanger",
+      "enabled": true,
+      "rate": 30,
+      "width": 68,
+      "intensity": 60,
+      "feedback": 58
+    },
+    "efx": {
+      "model": "RC Boost",
+      "enabled": true,
+      "gain": 20,
+      "volume": 56,
+      "bass": 42,
+      "treble": 64,
+      "notes": "Low-gain boost to tighten and brighten the amp distortion."
+    },
+    "amplifier": {
+      "model": "Plexi 100",
+      "enabled": true,
+      "gain": 76,
+      "master": 72,
+      "bass": 43,
+      "middle": 63,
+      "treble": 60,
+      "presence": 60
+    },
+    "cabinet": {
+      "model": "GB412",
+      "enabled": true,
+      "level": 0,
+      "low_cut_hz": 75,
+      "high_cut_hz": 9500
+    },
+    "eq": {
+      "model": "6-Band",
+      "enabled": true,
+      "band_100hz": -2,
+      "band_220hz": 0,
+      "band_500hz": 1,
+      "band_1200hz": 1,
+      "band_2600hz": 1,
+      "band_6400hz": 0
+    },
+    "delay": {
+      "model": "Analog",
+      "enabled": false,
+      "time": 18,
+      "repeat": 12,
+      "level": 12
+    },
+    "reverb": {
+      "model": "Room",
+      "enabled": false,
+      "decay": 22,
+      "tone": 45,
+      "level": 10
+    }
+  },
+  "other_blocks": {
+    "wah": false,
+    "send_return": false
+  },
+  "guitar_settings": {
+    "pickup_selector": "bridge",
+    "volume": 10,
+    "tone": 8,
+    "notes": "Tune down a whole step; use Drop D-flat tuning for the song's low-string riff."
+  },
+  "playing_notes": "Keep the riff punchy and articulate with strong pick attack and controlled muting. The flanger should be clearly audible on held chords and transitions without obscuring the riff.",
+  "sources": {
+    "song_reference": "https://en.wikipedia.org/wiki/Unchained_(song)",
+    "reference_note": "The song reference identifies the MXR M-117 flanger as a prominent part of the sound and notes Drop D-flat tuning. The amp and remaining settings are a practical approximation using the available Mighty Plug Pro models, not a verified recording signal chain."
+  },
+  "master": 50,
+  "bpm": 116
+}
