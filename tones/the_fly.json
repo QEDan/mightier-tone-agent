@@ -1,0 +1,99 @@
+{
+  "name": "The Fly - U2",
+  "artist": "U2 (The Edge)",
+  "album": "Achtung Baby (1991)",
+  "guitar": "Bridge pickup; humbuckers are a useful starting point, but no specific recording guitar is assumed",
+  "device": "mighty_plug_pro",
+  "signal_chain": [
+    "NG",
+    "CMP",
+    "MOD",
+    "EFX",
+    "AMP",
+    "CAB",
+    "EQ",
+    "DLY",
+    "RVB"
+  ],
+  "blocks": {
+    "noise_gate": {
+      "enabled": true,
+      "threshold": 24,
+      "decay": 32
+    },
+    "compressor": {
+      "enabled": false
+    },
+    "modulation": {
+      "model": "Phase 90",
+      "enabled": true,
+      "speed": 14
+    },
+    "efx": {
+      "model": "Dist One",
+      "enabled": true,
+      "drive": 68,
+      "tone": 56,
+      "level": 62,
+      "notes": "A sharp, gritty distortion approximation for the song's abrasive guitar texture."
+    },
+    "amplifier": {
+      "model": "Brit 800",
+      "enabled": true,
+      "gain": 58,
+      "master": 72,
+      "bass": 44,
+      "middle": 65,
+      "treble": 59,
+      "presence": 55
+    },
+    "cabinet": {
+      "model": "M1960AV",
+      "enabled": true,
+      "level": 0,
+      "low_cut_hz": 70,
+      "high_cut_hz": 9000
+    },
+    "eq": {
+      "model": "6-Band",
+      "enabled": true,
+      "band_100hz": -2,
+      "band_220hz": -1,
+      "band_500hz": 1,
+      "band_1200hz": 1,
+      "band_2600hz": 2,
+      "band_6400hz": 1
+    },
+    "delay": {
+      "model": "Digital Delay",
+      "enabled": false,
+      "time": 30,
+      "repeat": 15,
+      "level": 15
+    },
+    "reverb": {
+      "model": "Room",
+      "enabled": false,
+      "decay": 25,
+      "tone": 42,
+      "level": 12
+    }
+  },
+  "other_blocks": {
+    "wah": false,
+    "send_return": false
+  },
+  "guitar_settings": {
+    "pickup_selector": "bridge",
+    "volume": 10,
+    "tone": 8,
+    "notes": "Starting point only; adjust pickup and tone controls to suit your guitar."
+  },
+  "playing_notes": "Use a tight, percussive attack and let the chord notes stay distinct. The slow phaser is a playable approximation of the layered, naturally phasing opening guitar texture, not an exact recreation of the studio process.",
+  "sources": {
+    "song_reference": "https://en.wikipedia.org/wiki/The_Fly_(U2_song)",
+    "reference_note": "The article describes the abrasive guitar sound and says the opening phasing was created by layering additional guitar over the existing part. Exact recording gear is not asserted here; the NUX models and settings are tone-match approximations."
+  },
+  "master": 50,
+  "bpm": 108
+}

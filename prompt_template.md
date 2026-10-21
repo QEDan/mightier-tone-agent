@@ -33,4 +33,12 @@ Please follow this rigorous step-by-step workflow:
      - `"blocks"`: Nested dictionary containing block configurations (e.g., `amplifier`, `cabinet`, `efx`, `delay`, `reverb`, `modulation`, `compressor`, `eq`, `noise_gate`), with `"enabled"` flags and parameter values matching the valid models listed in `mightier_amp_settings.md`[cite: 2].
 
 Provide the final JSON code block along with a brief explanation of the gear choices, research insights, and settings you selected.
+
+For the copy-and-paste workflow, suggest a new lowercase `snake_case` filename
+based on the requested tone (for example, `tones/my_tone.json`) outside the
+JSON code block. Output the complete JSON without comments or trailing commas
+so it can be saved directly as a file in `tones/`. After saving it, generate
+the QR code with
+`python3 gen_qr.py tones/my_tone.json tones/my_tone.png`. Do not put the
+explanation inside the JSON.
 ```
